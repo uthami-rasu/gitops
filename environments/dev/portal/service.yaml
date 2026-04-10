@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portal
+  namespace: demo-app-dev
+spec:
+  selector:
+    app: portal
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
