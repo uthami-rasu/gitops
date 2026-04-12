@@ -1,41 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Values.namespace }}
+  name: "{{ .Chart.Name }}"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: "{{ .Chart.Name }}"
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: "{{ .Chart.Name }}"
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: "{{ .Chart.Name }}"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: "{{ .Values.image.pullPolicy | default "IfNotPresent" }}"
+          
           ports:
             - containerPort: {{ .Values.service.targetPort }}
               name: http
+
           {{- if or .Values.envFromConfigMaps .Values.envFromSecrets }}
           envFrom:
             {{- range .Values.envFromConfigMaps }}
             - configMapRef:
-                name: {{ . }}
+                name: "{{ . }}"
             {{- end }}
             {{- range .Values.envFromSecrets }}
             - secretRef:
-                name: {{ . }}
+                name: "{{ . }}"
             {{- end }}
           {{- end }}
+
           {{- if .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           {{- end }}
+
           {{- if .Values.readinessProbe }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+
+          {{- if .Values.resources }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
