@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: therazz28/demo-app
+  tag: v0.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+namespace: default
+
+# ConfigMaps and Secrets for environment variables
+envFromConfigMaps: []
+# - name: app-config
+envFromSecrets: []
+# - name: app-secret
+
+# Health Probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10

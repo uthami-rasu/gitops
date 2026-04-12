@@ -1,0 +1,5 @@
+replicaCount: 1
+namespace: demo-app-sit
+
+image:
+  tag: v0.1-sit # placeholder

@@ -1,0 +1,5 @@
+replicaCount: 2
+namespace: demo-app-prod
+
+image:
+  tag: v0.1-prod # placeholder

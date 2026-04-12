@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sit-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: portal
+  template:
+    metadata:
+      name: "sit-{{name}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/uthami-rasu/gitops.git
+        targetRevision: main # Could be 'sit' branch if needed
+        path: charts/{{name}}
+        helm:
+          valueFiles:
+            - ../../environments/sit/{{name}}-values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: demo-app-sit
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prod-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: portal
+  template:
+    metadata:
+      name: "prod-{{name}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/uthami-rasu/gitops.git
+        targetRevision: main # Could be 'prod' branch or a tag
+        path: charts/{{name}}
+        helm:
+          valueFiles:
+            - ../../environments/prod/{{name}}-values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: demo-app-prod
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

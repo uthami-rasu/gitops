@@ -3,32 +3,30 @@ kind: ApplicationSet
 metadata:
   name: dev-apps
   namespace: argocd
-
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/uthami-rasu/gitops.git
-        revision: main
-        directories:
-          - path: environments/dev/* # 🔒 ONLY DEV
-
+    - list:
+        elements:
+          - name: portal
+          # - name: orders # placeholder for future services
   template:
     metadata:
-      name: "dev-{{path.basename}}"
-
+      name: "dev-{{name}}"
     spec:
       project: default
-
       source:
         repoURL: https://github.com/uthami-rasu/gitops.git
         targetRevision: main
-        path: "{{path}}"
-
+        path: charts/{{name}}
+        helm:
+          valueFiles:
+            - ../../environments/dev/{{name}}-values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: demo-app-dev # ✅ your namespace
-
+        namespace: demo-app-dev-1
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
