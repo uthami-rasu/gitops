@@ -11,6 +11,6 @@ spec:
     app: "{{ .Chart.Name }}"
   ports:
     - name: http
-      port: "{{ .Values.service.port }}"
-      targetPort: "{{ .Values.service.targetPort }}"
+      port: { { .Values.service.port } }
+      targetPort: { { .Values.service.targetPort } }
       protocol: TCP
